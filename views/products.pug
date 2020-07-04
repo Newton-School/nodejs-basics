@@ -1,0 +1,18 @@
+extends layouts/main-layout.pug
+
+block styles
+  link(rel="stylesheet", href="/css/product.css")
+
+block content
+  main
+    ul.product__list
+      if products.length
+        each product in products
+          li.product__list-item
+            h4 #{product.title}
+            p #{product.description}
+            span Rs. #{product.price}
+            div
+              button(type="button") Add Product
+      else
+        h3 No products
