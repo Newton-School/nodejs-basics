@@ -1,7 +1,14 @@
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 const v1Routes = require("./routes/v1");
+
+mongoose.connect("mongodb://localhost:27017/blog", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+});
 
 const PORT = 3000;
 const app = express();
