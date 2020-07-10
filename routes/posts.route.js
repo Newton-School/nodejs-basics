@@ -3,6 +3,8 @@ const {
   getAllPosts,
   getPost,
   createPost,
+  updatePost,
+  deletePost,
   getPostsCount,
   getLikesCount,
   getUrls,
@@ -18,7 +20,9 @@ router.get("/post/:id", getPost);
 
 router.post("/add-post", createPost);
 
-router.put("/update-post/:id", createPost);
+router.put("/update-post/:id", updatePost);
+
+router.delete("/delete-post/:id", deletePost);
 
 router.get("/posts-count-per-author", getPostsCount);
 

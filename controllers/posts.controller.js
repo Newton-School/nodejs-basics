@@ -61,6 +61,20 @@ exports.updatePost = (req, res) => {
   );
 };
 
+exports.deletePost = (req, res) => {
+  const { id } = req.params;
+
+  Posts.findByIdAndDelete({ _id: id }).exec((err, post) => {
+    if (err)
+      return res.status(400).json({
+        status: "failed",
+        message: "Deleting the post from db failed",
+      });
+
+    return res.json(post);
+  });
+};
+
 exports.getPostsCount = (req, res) => {
   Posts.aggregate([
     { $match: { author: "Tim" } },
