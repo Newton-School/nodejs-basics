@@ -1,14 +1,17 @@
 const Posts = require("../models/posts.model");
+const Comments = require("../models/comments.model");
 
 exports.getAllPosts = (__, res) => {
-  Posts.find({}).exec((err, posts) => {
-    if (err)
-      return res
-        .status(400)
-        .json({ status: "failed", message: "Fetching posts from db failed" });
+  Posts.find({})
+    .populate("comments", { message: 1 })
+    .exec((err, posts) => {
+      if (err)
+        return res
+          .status(400)
+          .json({ status: "failed", message: "Fetching posts from db failed" });
 
-    return res.json(posts);
-  });
+      return res.json(posts);
+    });
 };
 
 exports.getPost = (req, res) => {
@@ -25,24 +28,48 @@ exports.getPost = (req, res) => {
 
 exports.createPost = (req, res) => {
   const Post = new Posts();
-  const { title, desc, likes, comments, author, category, url } = req.body;
+  const CommentSchema = new Comments();
+  const {
+    title,
+    desc,
+    likes,
+    comment,
+    author,
+    category,
+    phone,
+    url,
+  } = req.body;
+  const { user, message } = comment;
 
   Post.title = title;
   Post.desc = desc;
   Post.likes = likes;
   Post.author = author;
-  Post.comments = comments;
   Post.category = category;
+  Post.phone = phone;
   Post.url = url;
 
-  Post.save((err, post) => {
+  CommentSchema.user = user;
+  CommentSchema.message = message;
+
+  CommentSchema.save((err, result) => {
     if (err)
       return res.status(400).json({
         status: "failed",
-        message: "Failed to create a post",
+        message: `Failed to create a comment: ${err}`,
       });
 
-    return res.json(post);
+    Post.comments = [result._id];
+
+    Post.save((err, post) => {
+      if (err)
+        return res.status(400).json({
+          status: "failed",
+          message: `Failed to create a post: ${err}`,
+        });
+
+      return res.json(post);
+    });
   });
 };
 
