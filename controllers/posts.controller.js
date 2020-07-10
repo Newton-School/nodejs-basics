@@ -60,3 +60,60 @@ exports.updatePost = (req, res) => {
     }
   );
 };
+
+exports.getPostsCount = (req, res) => {
+  Posts.aggregate([
+    { $group: { _id: "$author", num_of_posts: { $sum: 1 } } },
+  ]).exec((err, result) => {
+    if (err)
+      return res.status(400).json({
+        status: "failed",
+        message: "Aggregation of posts has failed",
+      });
+
+    return res.json(result);
+  });
+};
+
+// Instead of $sum, you can also use $min, $max, $avg, etc
+exports.getLikesCount = (req, res) => {
+  Posts.aggregate([
+    { $group: { _id: "$author", total_likes: { $sum: "$likes" } } },
+  ]).exec((err, result) => {
+    if (err)
+      return res.status(400).json({
+        status: "failed",
+        message: "Aggregation of likes has failed",
+      });
+
+    return res.json(result);
+  });
+};
+
+exports.getUrls = (req, res) => {
+  Posts.aggregate([
+    { $group: { _id: "$author", urls: { $push: "$url" } } },
+  ]).exec((err, result) => {
+    if (err)
+      return res.status(400).json({
+        status: "failed",
+        message: "Aggregation of likes has failed",
+      });
+
+    return res.json(result);
+  });
+};
+
+exports.getUniqueUrls = (req, res) => {
+  Posts.aggregate([
+    { $group: { _id: "$author", urls: { $addToSet: "$url" } } },
+  ]).exec((err, result) => {
+    if (err)
+      return res.status(400).json({
+        status: "failed",
+        message: "Aggregation of likes has failed",
+      });
+
+    return res.json(result);
+  });
+};
