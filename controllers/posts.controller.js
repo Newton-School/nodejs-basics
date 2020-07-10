@@ -63,6 +63,7 @@ exports.updatePost = (req, res) => {
 
 exports.getPostsCount = (req, res) => {
   Posts.aggregate([
+    { $match: { author: "Tim" } },
     { $group: { _id: "$author", num_of_posts: { $sum: 1 } } },
   ]).exec((err, result) => {
     if (err)
@@ -78,7 +79,9 @@ exports.getPostsCount = (req, res) => {
 // Instead of $sum, you can also use $min, $max, $avg, etc
 exports.getLikesCount = (req, res) => {
   Posts.aggregate([
+    { $sort: { author: -1 } },
     { $group: { _id: "$author", total_likes: { $sum: "$likes" } } },
+    { $limit: 2 },
   ]).exec((err, result) => {
     if (err)
       return res.status(400).json({
