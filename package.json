@@ -1,5 +1,5 @@
 {
-  "name": "learn-nodejs",
+  "name": "nodejs-basics",
   "version": "1.0.0",
   "description": "A package to learn node.js",
   "main": "index.js",
